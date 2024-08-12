@@ -1,30 +1,78 @@
 <template>
-  <div>
+  <div :class="toggleState ? 'dark-theme' : 'light-theme'">
     <h1 class="center-title">All Posts</h1>
+    <div class="theme-toggle">
+      <Toggle
+        v-model:pressed="toggleState"
+        aria-label="Toggle theme"
+        class="hover:bg-green3 text-mauve11 data-[state=on]:bg-green6 data-[state=on]:text-violet12 shadow-blackA7 flex h-[35px] w-[35px] items-center justify-center rounded bg-white text-base leading-4 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-black"
+      >
+        <Icon
+          :icon="toggleState ? 'mdi:weather-night' : 'mdi:weather-sunny'"
+          class="w-[15px] h-[15px]"
+        />
+      </Toggle>
+    </div>
     <button @click="createPost" class="create-button">Create Post</button>
     <div class="posts-container">
       <div class="post-card" v-for="post in posts" :key="post.id">
         <div class="post-header">
           <h2 class="post-title">{{ post.title }}</h2>
-          <button @click="deletePost(post.id)" class="delete-button">Delete</button>
+          <button @click="handleDelete(post.id)" class="delete-button" :disabled="loading[post.id]">
+            {{ loading[post.id] ? 'Deleting...' : 'Delete' }}
+          </button>
         </div>
         <p class="author"><strong>Posted by:</strong> <span class="author-name">{{ getUserName(post.userId) }}</span></p>
         <p class="post-content">{{ post.body }}</p>
         <button @click="goToPost(post.id)" class="view-button">View Details</button>
+        <div v-if="loading[post.id]" class="progress-container">
+          <ProgressRoot
+            v-model="progressValues[post.id]"
+            class="relative overflow-hidden bg-blackA9 rounded-full w-full sm:w-[300px] h-4 sm:h-5"
+            style="transform: translateZ(0)"
+          >
+            <ProgressIndicator
+              class="bg-white rounded-full w-full h-full transition-transform duration-[660ms] ease-[cubic-bezier(0.65, 0, 0.35, 1)]"
+              :style="`transform: translateX(-${100 - progressValues[post.id]}%)`"
+            />
+          </ProgressRoot>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router';
-import { ref, inject } from 'vue';
+<script setup lang="ts">
+import { Toggle } from 'radix-vue';
+import { Icon } from '@iconify/vue';
+import { ref, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { ProgressIndicator, ProgressRoot } from 'radix-vue';
 
-const posts = inject('posts'); // Inject the posts from the parent component
+const posts = ref([]);
 const users = ref([]);
+const loading = ref({});
+const progressValues = ref({});
+const toggleState = ref(false); // Toggle state for theme
 const router = useRouter();
+const route = useRoute();
 
-// Fetch users data
+// Fetch posts and users
+const fetchPosts = async () => {
+  try {
+    const postResponse = await fetch('https://jsonplaceholder.typicode.com/posts');
+    posts.value = await postResponse.json();
+
+    // Check if there's a new post to add
+    if (route.query.newPost) {
+      const newPost = JSON.parse(route.query.newPost);
+      posts.value.unshift(newPost); // Add the new post to the beginning of the array
+    }
+  } catch (error) {
+    console.error('Failed to fetch posts:', error);
+  }
+};
+
 const fetchUsers = async () => {
   try {
     const userResponse = await fetch('https://jsonplaceholder.typicode.com/users');
@@ -34,13 +82,21 @@ const fetchUsers = async () => {
   }
 };
 
-// Function to get the user's name
+onMounted(() => {
+  fetchPosts();  // Fetch posts when the component is mounted
+  fetchUsers();  // Fetch users when the component is mounted
+});
+
+// Watch for query parameter change to refresh posts
+watch(() => route.query.refresh, async () => {
+  await fetchPosts();
+});
+
 const getUserName = (userId) => {
   const user = users.value.find(user => user.id === userId);
   return user ? user.name : 'Unknown';
 };
 
-// Function to navigate to the post's details page
 const createPost = () => {
   router.push('/create');
 };
@@ -49,21 +105,54 @@ const goToPost = (id) => {
   router.push(`/posts/${id}`);
 };
 
-// Function to delete a post
-const deletePost = async (postId) => {
-  await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
-    method: 'DELETE',
-  });
-  posts.value = posts.value.filter(post => post.id !== postId);
-};
+const handleDelete = async (postId) => {
+  const confirmed = confirm('Are you sure you want to delete this post? This action cannot be undone.');
+  if (confirmed) {
+    loading.value[postId] = true;
+    progressValues.value[postId] = 10;
 
-// Fetch users data on component mount
-fetchUsers();
+    const timer = setInterval(() => {
+      progressValues.value[postId] += 15;
+      if (progressValues.value[postId] >= 100) {
+        clearInterval(timer);
+      }
+    }, 300);
+
+    try {
+      await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      posts.value = posts.value.filter(post => post.id !== postId);
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    } finally {
+      clearInterval(timer);
+      loading.value[postId] = false;
+      progressValues.value[postId] = 0; // Reset progress value
+    }
+  }
+};
 </script>
 
 <style scoped>
+.dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.light-theme {
+  background-color: #ffffff;
+  color: #000000;
+}
+
 .center-title {
   text-align: center;
+  margin-bottom: 20px;
+}
+
+.theme-toggle {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
 }
 
@@ -116,6 +205,17 @@ fetchUsers();
 
 .delete-button:hover {
   background-color: #c82333;
+}
+
+.delete-button:disabled {
+  background-color: #dc3545;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.progress-container {
+  margin-top: 10px;
+  text-align: center;
 }
 
 .author-name {

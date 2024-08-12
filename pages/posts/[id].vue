@@ -20,15 +20,11 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-// Get the post ID from the route parameters
 const route = useRoute();
 const postId = route.params.id;
-
-// Reactive references to hold post data and comments
 const post = ref({});
 const comments = ref([]);
 
-// Fetch the post data
 fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
   .then(response => response.json())
   .then(data => {
@@ -38,7 +34,6 @@ fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
     console.error('Failed to load post:', error);
   });
 
-// Fetch the comments data
 fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
   .then(response => response.json())
   .then(data => {
@@ -48,7 +43,6 @@ fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
     console.error('Failed to load comments:', error);
   });
 
-// Function to navigate back to the All Posts page
 const router = useRouter();
 const goBack = () => {
   router.push('/');
@@ -116,5 +110,20 @@ em {
 
 .back-button:hover {
   background-color: #0056b3;
+}
+
+.light-mode {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+:root {
+  background-color: inherit;
+  color: inherit;
 }
 </style>
