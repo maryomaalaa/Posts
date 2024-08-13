@@ -4,17 +4,13 @@
     <p><strong>Post:</strong> {{ post.body }}</p>
     <h2>Comments</h2>
     <div v-if="comments.length" class="comments-container">
-      <Card v-for="comment in comments" :key="comment.id" class="comment-card">
-        <CardHeader>
-          <CardTitle><strong>{{ comment.name }}</strong></CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{{ comment.body }}</p>
-        </CardContent>
-        <CardFooter>
-          <em>{{ comment.email }}</em>
-        </CardFooter>
-      </Card>
+      <CommentCard
+        v-for="comment in comments"
+        :key="comment.id"
+        :name="comment.name"
+        :body="comment.body"
+        :email="comment.email"
+      />
     </div>
     <p v-else>No comments found.</p>
     
@@ -78,29 +74,6 @@ em {
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
   gap: 20px;
   margin-top: 20px;
-}
-
-.comment-card {
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.comment-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.comment-card p {
-  margin: 0;
-}
-
-.comment-card strong {
-  display: block;
-  margin-bottom: 5px;
 }
 
 .back-button {

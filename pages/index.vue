@@ -15,29 +15,17 @@
     </div>
     <Button @click="createPost" class="create-button">Create Post</Button>
     <div class="posts-container">
-      <Card v-for="post in posts" :key="post.id" class="post-card relative">
-        <CardHeader>
-          <CardTitle class="post-title">{{ post.title }}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p class="post-content">{{ post.body }}</p>
-        </CardContent>
-        <CardFooter class="flex flex-col items-start">
-          <CardDescription class="post-author">
-            Posted by <span class="author-name">{{ getUserName(post.userId) }}</span>
-          </CardDescription>
-          <div class="button-group">
-            <Button
-              @click="handleDelete(post.id)"
-              class="delete-button"
-              :disabled="loading[post.id]"
-            >
-              {{ loading[post.id] ? 'Deleting...' : 'Delete' }}
-          </Button>
-            <Button @click="goToPost(post.id)" class="view-button">View Details</Button>
-          </div>
-        </CardFooter>
-      </Card>
+      <PostCard
+        v-for="post in posts"
+        :key="post.id"
+        :title="post.title"
+        :body="post.body"
+        :author="getUserName(post.userId)"
+        :postId="post.id"
+        :loading="loading[post.id]"
+        @delete="handleDelete"
+        @view="goToPost"
+      />
     </div>
   </div>
 </template>
@@ -47,7 +35,7 @@ import { Toggle } from 'radix-vue';
 import { Icon } from '@iconify/vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-
+import PostCard from '~/components/PostCard.vue'; // Import the PostCard component
 
 const posts = ref([]);
 const users = ref([]);
@@ -57,13 +45,11 @@ const toggleState = ref(false); // Toggle state for theme
 const router = useRouter();
 const route = useRoute();
 
-// Fetch posts and users
 const fetchPosts = async () => {
   try {
     const postResponse = await fetch('https://jsonplaceholder.typicode.com/posts');
     posts.value = await postResponse.json();
 
-    // Check if there's a new post to add
     if (route.query.newPost) {
       const newPost = JSON.parse(route.query.newPost);
       posts.value.unshift(newPost); // Add the new post to the beginning of the array
@@ -87,7 +73,6 @@ onMounted(() => {
   fetchUsers();  // Fetch users when the component is mounted
 });
 
-// Watch for query parameter change to refresh posts
 watch(() => route.query.refresh, async () => {
   await fetchPosts();
 });
@@ -175,72 +160,5 @@ const handleDelete = async (postId) => {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-}
-
-.post-card {
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.post-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.post-author {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.author-name {
-  color: rgb(17, 96, 138);
-  font-weight: bold;
-}
-
-.post-content {
-  margin-bottom: 10px;
-}
-
-.button-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.delete-button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.delete-button:hover {
-  background-color: #c82333;
-}
-
-.delete-button:disabled {
-  background-color: #dc3545;
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.view-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.view-button:hover {
-  background-color: #0056b3;
 }
 </style>
