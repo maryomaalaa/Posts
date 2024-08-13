@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watchEffect, defineProps } from 'vue'
 import { ProgressIndicator, ProgressRoot } from 'radix-vue'
 
-const progressValue = ref(10)
+const props = defineProps({
+  value: {
+    type: Number,
+    required: true
+  }
+})
 
-onMounted(() => {
-  const timer = setTimeout(() => (progressValue.value = 66), 500)
-  return () => clearTimeout(timer)
+const progressValue = ref(0)
+
+watchEffect(() => {
+  progressValue.value = props.value
 })
 </script>
 

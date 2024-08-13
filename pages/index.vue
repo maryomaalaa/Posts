@@ -13,31 +13,31 @@
         />
       </Toggle>
     </div>
-    <button @click="createPost" class="create-button">Create Post</button>
+    <Button @click="createPost" class="create-button">Create Post</Button>
     <div class="posts-container">
-      <div class="post-card" v-for="post in posts" :key="post.id">
-        <div class="post-header">
-          <h2 class="post-title">{{ post.title }}</h2>
-          <button @click="handleDelete(post.id)" class="delete-button" :disabled="loading[post.id]">
-            {{ loading[post.id] ? 'Deleting...' : 'Delete' }}
-          </button>
-        </div>
-        <p class="author"><strong>Posted by:</strong> <span class="author-name">{{ getUserName(post.userId) }}</span></p>
-        <p class="post-content">{{ post.body }}</p>
-        <button @click="goToPost(post.id)" class="view-button">View Details</button>
-        <div v-if="loading[post.id]" class="progress-container">
-          <ProgressRoot
-            v-model="progressValues[post.id]"
-            class="relative overflow-hidden bg-blackA9 rounded-full w-full sm:w-[300px] h-4 sm:h-5"
-            style="transform: translateZ(0)"
-          >
-            <ProgressIndicator
-              class="bg-white rounded-full w-full h-full transition-transform duration-[660ms] ease-[cubic-bezier(0.65, 0, 0.35, 1)]"
-              :style="`transform: translateX(-${100 - progressValues[post.id]}%)`"
-            />
-          </ProgressRoot>
-        </div>
-      </div>
+      <Card v-for="post in posts" :key="post.id" class="post-card relative">
+        <CardHeader>
+          <CardTitle class="post-title">{{ post.title }}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p class="post-content">{{ post.body }}</p>
+        </CardContent>
+        <CardFooter class="flex flex-col items-start">
+          <CardDescription class="post-author">
+            Posted by <span class="author-name">{{ getUserName(post.userId) }}</span>
+          </CardDescription>
+          <div class="button-group">
+            <Button
+              @click="handleDelete(post.id)"
+              class="delete-button"
+              :disabled="loading[post.id]"
+            >
+              {{ loading[post.id] ? 'Deleting...' : 'Delete' }}
+          </Button>
+            <Button @click="goToPost(post.id)" class="view-button">View Details</Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   </div>
 </template>
@@ -47,7 +47,7 @@ import { Toggle } from 'radix-vue';
 import { Icon } from '@iconify/vue';
 import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { ProgressIndicator, ProgressRoot } from 'radix-vue';
+
 
 const posts = ref([]);
 const users = ref([]);
@@ -182,16 +182,34 @@ const handleDelete = async (postId) => {
   border: 1px solid #ccc;
   border-radius: 8px;
   background-color: #fff;
-}
-
-.post-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .post-title {
-  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.post-author {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.author-name {
+  color: rgb(17, 96, 138);
+  font-weight: bold;
+}
+
+.post-content {
+  margin-bottom: 10px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .delete-button {
@@ -213,25 +231,11 @@ const handleDelete = async (postId) => {
   cursor: not-allowed;
 }
 
-.progress-container {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.author-name {
-  color: rgb(17, 96, 138);
-}
-
-.post-content {
-  margin-bottom: 10px;
-}
-
 .view-button {
-  margin-top: 10px;
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
 }

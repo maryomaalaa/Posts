@@ -4,15 +4,21 @@
     <p><strong>Post:</strong> {{ post.body }}</p>
     <h2>Comments</h2>
     <div v-if="comments.length" class="comments-container">
-      <div v-for="comment in comments" :key="comment.id" class="comment-card">
-        <p><strong>{{ comment.name }}</strong></p>
-        <p>{{ comment.body }}</p>
-        <p><em>{{ comment.email }}</em></p>
-      </div>
+      <Card v-for="comment in comments" :key="comment.id" class="comment-card">
+        <CardHeader>
+          <CardTitle><strong>{{ comment.name }}</strong></CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>{{ comment.body }}</p>
+        </CardContent>
+        <CardFooter>
+          <em>{{ comment.email }}</em>
+        </CardFooter>
+      </Card>
     </div>
     <p v-else>No comments found.</p>
     
-    <button @click="goBack" class="back-button">Back to All Posts</button>
+    <Button @click="goBack" class="back-button">Back to All Posts</Button>
   </div>
 </template>
 
@@ -110,20 +116,5 @@ em {
 
 .back-button:hover {
   background-color: #0056b3;
-}
-
-.light-mode {
-  background-color: #ffffff;
-  color: #000000;
-}
-
-.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
-
-:root {
-  background-color: inherit;
-  color: inherit;
 }
 </style>
