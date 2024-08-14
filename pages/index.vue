@@ -2,16 +2,7 @@
   <div :class="toggleState ? 'dark-theme' : 'light-theme'">
     <h1 class="center-title">All Posts</h1>
     <div class="theme-toggle">
-      <Toggle
-        v-model:pressed="toggleState"
-        aria-label="Toggle theme"
-        class="hover:bg-green3 text-mauve11 data-[state=on]:bg-green6 data-[state=on]:text-violet12 shadow-blackA7 flex h-[35px] w-[35px] items-center justify-center rounded bg-white text-base leading-4 shadow-[0_2px_10px] focus-within:shadow-[0_0_0_2px] focus-within:shadow-black"
-      >
-        <Icon
-          :icon="toggleState ? 'mdi:weather-night' : 'mdi:weather-sunny'"
-          class="w-[15px] h-[15px]"
-        />
-      </Toggle>
+      <ThemeToggle @updateTheme="toggleState = $event" />
     </div>
     <Button @click="createPost" class="create-button">Create Post</Button>
     <div class="posts-container">
@@ -31,12 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import { Toggle } from 'radix-vue';
-import { Icon } from '@iconify/vue';
-import { ref, onMounted, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import PostCard from '~/components/PostCard.vue'; // Import the PostCard component
-
 const posts = ref([]);
 const users = ref([]);
 const loading = ref({});
