@@ -86,10 +86,5 @@
     background-color: #0056b3;
   }
   
-  h1 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #212529;
-  }
   </style>
   
