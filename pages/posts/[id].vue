@@ -14,13 +14,16 @@
     </div>
     <p v-else>No comments found.</p>
     
-    <Button @click="goBack" class="back-button">Back to All Posts</Button>
+    <CustomButton @click="goBack" variant="primary" class="back-button">
+      Back to All Posts
+    </CustomButton>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import CustomButton from '~/components/CustomButton.vue'; // Import the custom button
 
 const route = useRoute();
 const postId = route.params.id;
@@ -76,18 +79,4 @@ em {
   margin-top: 20px;
 }
 
-.back-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.back-button:hover {
-  background-color: #0056b3;
-}
 </style>

@@ -11,14 +11,14 @@
           Posted by <span class="author-name">{{ author }}</span>
         </CardDescription>
         <div class="button-group">
-          <Button
+          <CustomButton
             @click="handleDelete"
-            class="delete-button"
-            :disabled="loading"
+            :isDisabled="loading"
+            variant="danger"
           >
             {{ loading ? 'Deleting...' : 'Delete' }}
-          </Button>
-          <Button @click="viewDetails" class="view-button">View Details</Button>
+          </CustomButton>
+          <CustomButton @click="viewDetails" variant="primary">View Details</CustomButton>
         </div>
       </CardFooter>
     </Card>

@@ -1,10 +1,10 @@
 <template>
     <div class="form-container">
-      <h1>Create a New Post</h1>
+      <Label size="large">Create a New Post</Label>
       <form @submit.prevent="handleSubmit" class="form-content">
         <!-- Name Input with Label -->
         <div class="mb-4">
-          <Label for="name" class="block text-sm font-medium text-gray-700">
+          <Label size="medium" for="name">
             Your Name
           </Label>
           <input
@@ -17,7 +17,7 @@
   
         <!-- Title Input with Label -->
         <div class="mb-4">
-          <Label for="title" class="block text-sm font-medium text-gray-700">
+          <Label size="medium" for="title">
             Title
           </Label>
           <input
@@ -30,7 +30,7 @@
   
         <!-- Content Textarea with Label -->
         <div class="mb-4">
-          <Label for="content" class="block text-sm font-medium text-gray-700">
+          <Label size="medium" for="content">
             Content
           </Label>
           <textarea
@@ -42,16 +42,15 @@
         </div>
   
         <!-- Submit Button -->
-        <button type="submit" class="submit-button">
+        <CustomButton type="submit">
           Save Post
-        </button>
+        </CustomButton>
       </form>
     </div>
   </template>
   
   <script setup lang="ts">
   import { ref } from 'vue';
-  import { Label } from 'radix-vue';
   import { defineProps, defineEmits } from 'vue';
   
   const props = defineProps({
@@ -87,6 +86,7 @@
     });
   };
   </script>
+  
   
   <style scoped>
   .form-container {
@@ -132,10 +132,5 @@
     background-color: #0056b3;
   }
   
-  h1 {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #212529;
-  }
   </style>
   

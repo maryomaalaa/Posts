@@ -4,7 +4,9 @@
     <div class="theme-toggle">
       <ThemeToggle @updateTheme="toggleState = $event" />
     </div>
-    <Button @click="createPost" class="create-button">Create Post</Button>
+    <CustomButton @click="createPost" variant="success" class="create-button">
+      Create Post
+    </CustomButton>
     <div class="posts-container">
       <PostCard
         v-for="post in posts"
@@ -22,11 +24,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import ThemeToggle from '~/components/ThemeToggle.vue';
+import PostCard from '~/components/PostCard.vue';
+import CustomButton from '~/components/CustomButton.vue'; // Import the custom button
+
 const posts = ref([]);
 const users = ref([]);
-const loading = ref({});
-const progressValues = ref({});
-const toggleState = ref(false); // Toggle state for theme
+const loading = ref({}); // Object to track loading state for each post
+const toggleState = ref(false);
 const router = useRouter();
 const route = useRoute();
 
@@ -37,7 +44,7 @@ const fetchPosts = async () => {
 
     if (route.query.newPost) {
       const newPost = JSON.parse(route.query.newPost);
-      posts.value.unshift(newPost); // Add the new post to the beginning of the array
+      posts.value.unshift(newPost);
     }
   } catch (error) {
     console.error('Failed to fetch posts:', error);
@@ -54,8 +61,8 @@ const fetchUsers = async () => {
 };
 
 onMounted(() => {
-  fetchPosts();  // Fetch posts when the component is mounted
-  fetchUsers();  // Fetch users when the component is mounted
+  fetchPosts();
+  fetchUsers();
 });
 
 watch(() => route.query.refresh, async () => {
@@ -76,29 +83,24 @@ const goToPost = (id) => {
 };
 
 const handleDelete = async (postId) => {
-  const confirmed = confirm('Are you sure you want to delete this post? This action cannot be undone.');
-  if (confirmed) {
-    loading.value[postId] = true;
-    progressValues.value[postId] = 10;
-
-    const timer = setInterval(() => {
-      progressValues.value[postId] += 15;
-      if (progressValues.value[postId] >= 100) {
-        clearInterval(timer);
-      }
-    }, 300);
+  if (confirm('Are you sure you want to delete this post?')) {
+    loading.value[postId] = true; // Set loading state to true for this post
 
     try {
-      await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+      const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
         method: 'DELETE',
       });
-      posts.value = posts.value.filter(post => post.id !== postId);
+
+      if (response.ok) {
+        // Remove the post from the list
+        posts.value = posts.value.filter(post => post.id !== postId);
+      } else {
+        console.error('Failed to delete post');
+      }
     } catch (error) {
-      console.error('Failed to delete post:', error);
+      console.error('Error during deletion:', error);
     } finally {
-      clearInterval(timer);
-      loading.value[postId] = false;
-      progressValues.value[postId] = 0; // Reset progress value
+      loading.value[postId] = false; // Reset the loading state after deletion attempt
     }
   }
 };
