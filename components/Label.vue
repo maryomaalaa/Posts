@@ -1,4 +1,4 @@
-  <template>
+<template>
     <label :class="['label', sizeClass]">
       <slot></slot>
     </label>
