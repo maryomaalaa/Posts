@@ -1,7 +1,15 @@
-import { defineNuxtConfig } from 'nuxt/config';
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default defineNuxtConfig({
+export default ({
+  compatibility: {
+    date: '2024-08-15',
+  },
+  css: ['~/assets/css/tailwind.css'],
+  postcss: {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {},
+    },
+  },
   devtools: { enabled: true },
   vite: {
     server: {
@@ -13,7 +21,9 @@ export default defineNuxtConfig({
   },
   imports: {
     dirs: [
-      'components'
+      'components',
+      'repositories'
     ],
   },
+  plugins: ['~/plugins/repositories.ts'],
 });

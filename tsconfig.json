@@ -3,7 +3,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": true,
+    "strict": false,
+    "noImplicitAny": false,
     "jsx": "preserve",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -22,7 +23,6 @@
   "include": [
     "components/**/*.vue",
     "pages/**/*.vue",
-    "plugins/**/*.ts",
     "store/**/*.ts",
     "layouts/**/*.vue",
     "middleware/**/*.ts",

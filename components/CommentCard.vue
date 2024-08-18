@@ -1,49 +1,24 @@
 <template>
-    <Card class="comment-card">
-      <CardHeader>
-        <CardTitle><strong>{{ name }}</strong></CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p>{{ body }}</p>
-      </CardContent>
-      <CardFooter>
-        <em>{{ email }}</em>
-      </CardFooter>
-    </Card>
-  </template>
-  
-  <script setup>
-  import { defineProps } from 'vue';
-  
-  const props = defineProps({
-    name: String,
-    body: String,
-    email: String,
-  });
-  </script>
-  
-  <style scoped>
-  .comment-card {
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
-  .comment-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .comment-card p {
-    margin: 0;
-  }
-  
-  .comment-card strong {
-    display: block;
-    margin-bottom: 5px;
-  }
-  </style>
-  
+  <div
+    class="p-4 border-4 border-grey-500 rounded-lg bg-gray-50 shadow-sm hover:shadow-md hover:-translate-y-1 transition-transform duration-300"
+  >
+    <div class="mb-2">
+      <strong class="block mb-1 text-lg">{{ name }}</strong>
+    </div>
+    <div class="mb-2">
+      <p class="m-0">{{ body }}</p>
+    </div>
+    <div>
+      <em class="text-gray-500">{{ email }}</em>
+    </div>
+  </div>
+</template>
+
+<script setup>
+
+const props = defineProps({
+  name: String,
+  body: String,
+  email: String,
+});
+</script>

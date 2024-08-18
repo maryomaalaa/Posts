@@ -1,82 +1,78 @@
 <template>
   <div>
-    <h1>{{ post.title }}</h1>
-    <p><strong>Post:</strong> {{ post.body }}</p>
-    <h2>Comments</h2>
-    <div v-if="comments.length" class="comments-container">
-      <CommentCard
-        v-for="comment in comments"
-        :key="comment.id"
-        :name="comment.name"
-        :body="comment.body"
-        :email="comment.email"
-      />
+    <!-- Loading or Error Message -->
+    <div v-if="!post">
+      <p>Loading post details...</p>
     </div>
-    <p v-else>No comments found.</p>
-    
-    <CustomButton @click="goBack" variant="primary" class="back-button">
-      Back to All Posts
-    </CustomButton>
+
+    <!-- Post Details -->
+    <div v-else>
+      <!-- Post Title -->
+      <h1 class="text-blue-700 text-2xl font-bold mb-4">{{ post.title }}</h1>
+
+      <!-- Post Body -->
+      <p class="mb-2 font-bold">
+        <strong>Post:&nbsp;</strong> {{ post.body }}
+      </p>
+
+      <!-- Comments Section Header -->
+      <h2 class="text-xl font-semibold mb-4">Comments</h2>
+
+      <!-- Comments Grid -->
+      <div v-if="comments.length" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <CommentCard
+          v-for="comment in comments"
+          :key="comment.id"
+          :name="comment.name"
+          :body="comment.body"
+          :email="comment.email"
+        />
+      </div>
+
+      <!-- No Comments Found Message -->
+      <p v-else class="text-gray-500">No comments found.</p>
+
+      <!-- Back Button -->
+      <CustomButton @click="goBack" variant="primary" class="mt-4">
+        Back to All Posts
+      </CustomButton>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import CustomButton from '~/components/CustomButton.vue'; // Import the custom button
+import { postRepo } from '~/repositories/postRepo';
+import { commentRepo } from '~/repositories/commentRepo';
+
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
 
 const route = useRoute();
-const postId = route.params.id;
-const post = ref({});
+const postId = Array.isArray(route.params.id) ? parseInt(route.params.id[0], 10) : parseInt(route.params.id, 10);
+const post = ref<Post | null>(null);
 const comments = ref([]);
 
-fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`)
-  .then(response => response.json())
-  .then(data => {
-    post.value = data;
-  })
-  .catch(error => {
-    console.error('Failed to load post:', error);
-  });
+const fetchPostAndComments = async () => {
+  try {
+    post.value = await postRepo.getPostById(postId);
+    comments.value = await commentRepo.getComments(postId);
+  } catch (error) {
+    console.error('Failed to load post or comments:', error);
+  }
+};
 
-fetch(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`)
-  .then(response => response.json())
-  .then(data => {
-    comments.value = data;
-  })
-  .catch(error => {
-    console.error('Failed to load comments:', error);
-  });
+onMounted(() => {
+  fetchPostAndComments();
+});
 
 const router = useRouter();
 const goBack = () => {
   router.push('/');
 };
 </script>
-
-<style scoped>
-h1 {
-  color: rgb(32, 104, 191);
-}
-
-p {
-  margin-bottom: 10px;
-}
-
-strong {
-  font-weight: bold;
-}
-
-em {
-  color: gray;
-  font-style: italic;
-}
-
-.comments-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-  gap: 20px;
-  margin-top: 20px;
-}
-
-</style>
