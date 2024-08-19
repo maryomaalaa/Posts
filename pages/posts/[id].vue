@@ -1,24 +1,18 @@
 <template>
   <div>
-    <!-- Loading or Error Message -->
     <div v-if="!post">
       <p>Loading post details...</p>
     </div>
 
-    <!-- Post Details -->
     <div v-else>
-      <!-- Post Title -->
       <h1 class="text-blue-700 text-2xl font-bold mb-4">{{ post.title }}</h1>
 
-      <!-- Post Body -->
       <p class="mb-2 font-bold">
-        <strong>Post:&nbsp;</strong> {{ post.body }}
+        <strong>{{ $t("postLabel") }}:&nbsp;</strong> {{ post.body }}
       </p>
 
-      <!-- Comments Section Header -->
-      <h2 class="text-xl font-semibold mb-4">Comments</h2>
+      <h2 class="text-xl font-semibold mb-4">{{ $t("commentsTitle") }}</h2>
 
-      <!-- Comments Grid -->
       <div v-if="comments.length" class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <CommentCard
           v-for="comment in comments"
@@ -29,22 +23,20 @@
         />
       </div>
 
-      <!-- No Comments Found Message -->
       <p v-else class="text-gray-500">No comments found.</p>
 
-      <!-- Back Button -->
       <CustomButton @click="goBack" variant="primary" class="mt-4">
-        Back to All Posts
+        {{ $t("backButton") }}
       </CustomButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { postRepo } from '~/repositories/postRepo';
-import { commentRepo } from '~/repositories/commentRepo';
+import { ref, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { postRepo } from "~/repositories/postRepo";
+import { commentRepo } from "~/repositories/commentRepo";
 
 interface Post {
   id: number;
@@ -54,7 +46,9 @@ interface Post {
 }
 
 const route = useRoute();
-const postId = Array.isArray(route.params.id) ? parseInt(route.params.id[0], 10) : parseInt(route.params.id, 10);
+const postId = Array.isArray(route.params.id)
+  ? parseInt(route.params.id[0], 10)
+  : parseInt(route.params.id, 10);
 const post = ref<Post | null>(null);
 const comments = ref([]);
 
@@ -63,7 +57,7 @@ const fetchPostAndComments = async () => {
     post.value = await postRepo.getPostById(postId);
     comments.value = await commentRepo.getComments(postId);
   } catch (error) {
-    console.error('Failed to load post or comments:', error);
+    console.error("Failed to load post or comments:", error);
   }
 };
 
@@ -73,6 +67,6 @@ onMounted(() => {
 
 const router = useRouter();
 const goBack = () => {
-  router.push('/');
+  router.push("/");
 };
 </script>
