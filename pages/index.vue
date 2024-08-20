@@ -27,19 +27,26 @@
     </div>
 
     <h1 class="text-center mb-5 text-2xl font-bold">{{ $t("pageTitle") }}</h1>
-    <div class="flex justify-center mb-5">
+    <div class="flex justify-center mb-5 relative">
       <ThemeToggle @updateTheme="toggleState = $event" />
     </div>
-    <div class="flex justify-center mb-5">
+
+    <div class="relative flex justify-center flex-col items-center mb-5">
       <CustomButton
         @click="createPost"
         variant="success"
-        class="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
+        class="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center mb-4"
       >
         {{ $t("createPostButton") }}
       </CustomButton>
+      <div class="w-full p-4 bg-yellow-300 text-black text-center z-40">
+        {{ $t("chatbotInfo") }}
+      </div>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 px-5">
+
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 px-5 mt-10"
+    >
       <PostCard
         v-for="post in posts"
         :key="post.id"
@@ -52,6 +59,10 @@
         @view="goToPost"
       />
     </div>
+
+    <div class="mt-10">
+      <ChatBot />
+    </div>
   </div>
 </template>
 
@@ -59,6 +70,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { postRepo } from "~/repositories/postRepo";
+import ChatBot from "~/components/ChatBot.vue";
 import i18next from "i18next";
 
 interface Post {
@@ -86,7 +98,7 @@ const fetchPosts = async () => {
 
     if (route.query.newPost) {
       const newPost = JSON.parse(route.query.newPost as string);
-      posts.value.unshift(newPost); // Add the new post to the top of the list
+      posts.value.unshift(newPost);
     }
   } catch (error) {
     console.error("Failed to fetch posts:", error);
