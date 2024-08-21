@@ -23,4 +23,9 @@ export default {
     dirs: ["components", "repositories"],
   },
   plugins: ["~/plugins/repositories.ts", "~/plugins/i18n.js"],
+  runtimeConfig: {
+    public: {
+      googleApiKey: process.env.GOOGLE_API_KEY,
+    },
+  },
 };

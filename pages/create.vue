@@ -11,7 +11,7 @@ const router = useRouter();
 
 const savePost = async ({ name, title, body }) => {
   if (!name || !title || !body) {
-    alert(i18next.t("fillInAllFieldsAlert")); // Using the translation for the alert message
+    alert(i18next.t("fillInAllFieldsAlert"));
     return;
   }
 
