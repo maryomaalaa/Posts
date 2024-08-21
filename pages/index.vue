@@ -15,13 +15,13 @@
           @click="changeLanguage('en')"
           class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
         >
-          English
+          {{ $t("ENGlanguage") }}
         </button>
         <button
           @click="changeLanguage('ar')"
           class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
         >
-          Arabic
+          {{ $t("ARlanguage") }}
         </button>
       </div>
     </div>
