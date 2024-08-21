@@ -105,9 +105,7 @@ const fetchUsers = async () => {
 };
 
 function changeLanguage(lang) {
-  i18next.changeLanguage(lang, () => {
-    console.log(`Language changed to ${lang}`);
-  });
+  i18next.changeLanguage(lang, () => {});
 }
 
 onMounted(() => {
@@ -128,17 +126,14 @@ const getUserName = (userId: number) => {
 };
 
 const createPost = () => {
-  console.log("Create Post button clicked");
   router.push("/create");
 };
 
 const goToPost = (id: number) => {
-  console.log("View Details button clicked for post ID:", id);
   router.push(`/posts/${id}`);
 };
 
 const handleDelete = async (postId: number) => {
-  console.log("Delete button clicked for post ID:", postId);
   if (confirm(i18next.t("deleteConfirmation"))) {
     loading.value[postId] = true;
 

@@ -87,11 +87,5 @@ const handleSubmit = () => {
     title: localTitle.value,
     body: localBody.value,
   });
-
-  console.log("savePost event emitted with data:", {
-    name: localName.value,
-    title: localTitle.value,
-    body: localBody.value,
-  });
 };
 </script>
