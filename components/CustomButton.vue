@@ -1,74 +1,53 @@
 <template>
-    <button
-      :type="type"
-      :class="['custom-button', variant, { disabled: isDisabled }]"
-      :disabled="isDisabled"
-      @click="handleClick"
-    >
-      <slot></slot>
-    </button>
-  </template>
-  
-  <script setup lang="ts">
-  import { defineProps, defineEmits } from 'vue';
-  
-  const props = defineProps({
-    type: {
-      type: String,
-      default: 'button'
-    },
-    variant: {
-      type: String,
-      default: 'primary' 
-    },
-    isDisabled: {
-      type: Boolean,
-      default: false
-    }
-  });
-  
-  const emits = defineEmits(['click']);
-  
-  const handleClick = (event: MouseEvent) => {
-    if (!props.isDisabled) {
-      emits('click', event);
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .custom-button {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    border: none;
-    display: inline-block;
-    transition: background-color 0.3s;
+  <Button
+    :type="type"
+    :class="[
+      'px-4 py-2 text-sm rounded cursor-pointer inline-block transition-colors',
+      variantClass,
+      { 'cursor-not-allowed bg-gray-300 text-gray-600': isDisabled }
+    ]"
+    :disabled="isDisabled"
+    @click="handleClick"
+  >
+    <slot></slot>
+</Button>
+</template>
+
+<script setup lang="ts">
+
+import { computed } from 'vue';
+
+const props = defineProps({
+  type: {
+    type: String,
+    default: 'button',
+  },
+  variant: {
+    type: String,
+    default: 'primary',
+  },
+  isDisabled: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emits = defineEmits(['click']);
+
+const handleClick = (event: MouseEvent) => {
+  if (!props.isDisabled) {
+    emits('click', event);
   }
-  
-  .primary {
-    background-color: #007bff;
-    color: white;
+};
+
+const variantClass = computed(() => {
+  switch (props.variant) {
+    case 'primary':
+      return 'bg-blue-500 text-white hover:bg-blue-700';
+    case 'danger':
+      return 'bg-red-500 text-white hover:bg-red-700';
+    default:
+      return '';
   }
-  
-  .primary:hover {
-    background-color: #0056b3;
-  }
-  
-  .danger {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .danger:hover {
-    background-color: #c82333;
-  }
-  
-  .disabled {
-    background-color: #cccccc;
-    color: #666666;
-    cursor: not-allowed;
-  }
-  </style>
-  
+});
+</script>

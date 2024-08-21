@@ -1,51 +1,31 @@
-  <template>
-    <label :class="['label', sizeClass]">
-      <slot></slot>
-    </label>
-  </template>
-  
-  <script setup lang="ts">
-  import { computed } from 'vue';
-  import { defineProps } from 'vue';
-  
-  const props = defineProps({
-    size: {
-      type: String,
-      default: 'medium', // default size
-      validator: value => ['small', 'medium', 'large'].includes(value)
-    }
-  });
-  
-  const sizeClass = computed(() => {
-    switch (props.size) {
-      case 'small':
-        return 'text-small';
-      case 'medium':
-        return 'text-medium';
-      case 'large':
-        return 'text-large';
-      default:
-        return 'text-medium';
-    }
-  });
-  </script>
-  
-  <style scoped>
-  .label {
-    display: block;
-    font-weight: bold;
+<template>
+  <Label :class="['block font-bold', sizeClass]">
+    <slot></slot>
+  </Label>
+</template>
+
+<script setup lang="ts">
+import { computed } from 'vue';
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  size: {
+    type: String,
+    default: 'medium', // default size
+    validator: (value: string) => ['small', 'medium', 'large'].includes(value)
   }
-  
-  .text-small {
-    font-size: 1rem;
+});
+
+const sizeClass = computed(() => {
+  switch (props.size) {
+    case 'small':
+      return 'text-base'; // 1rem (16px)
+    case 'medium':
+      return 'text-xl'; // 1.5rem (24px)
+    case 'large':
+      return 'text-2xl'; // 2rem (32px)
+    default:
+      return 'text-xl'; // 1.5rem (24px)
   }
-  
-  .text-medium {
-    font-size: 1.5rem;
-  }
-  
-  .text-large {
-    font-size: 2rem;
-  }
-  </style>
-  
+});
+</script>

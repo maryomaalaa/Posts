@@ -14,7 +14,7 @@
   <script setup lang="ts">
   import { Toggle } from 'radix-vue';
   import { Icon } from '@iconify/vue';
-  import { ref } from 'vue';
+  import { ref, watch } from 'vue';
   import { defineEmits } from 'vue';
   
   const emits = defineEmits(['updateTheme']);
