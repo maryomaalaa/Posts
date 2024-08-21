@@ -21,19 +21,14 @@ const savePost = async ({ name, title, body }) => {
     userId: 1,
   };
 
-  try {
-    const createdPost = await postRepo.createPost(newPost);
-    console.log("Post created:", createdPost);
+  const createdPost = await postRepo.createPost(newPost);
 
-    router.push({
-      path: "/",
-      query: {
-        refresh: Date.now(),
-        newPost: JSON.stringify(createdPost),
-      },
-    });
-  } catch (error) {
-    console.error("Failed to save the post:", error);
-  }
+  router.push({
+    path: "/",
+    query: {
+      refresh: Date.now(),
+      newPost: JSON.stringify(createdPost),
+    },
+  });
 };
 </script>

@@ -15,13 +15,13 @@
           @click="changeLanguage('en')"
           class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
         >
-          English
+          {{ $t("ENGlanguage") }}
         </button>
         <button
           @click="changeLanguage('ar')"
           class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
         >
-          Arabic
+          {{ $t("ARlanguage") }}
         </button>
       </div>
     </div>
@@ -117,9 +117,7 @@ const fetchUsers = async () => {
 };
 
 function changeLanguage(lang) {
-  i18next.changeLanguage(lang, () => {
-    console.log(`Language changed to ${lang}`);
-  });
+  i18next.changeLanguage(lang, () => {});
 }
 
 onMounted(() => {
@@ -140,17 +138,14 @@ const getUserName = (userId: number) => {
 };
 
 const createPost = () => {
-  console.log("Create Post button clicked");
   router.push("/create");
 };
 
 const goToPost = (id: number) => {
-  console.log("View Details button clicked for post ID:", id);
   router.push(`/posts/${id}`);
 };
 
 const handleDelete = async (postId: number) => {
-  console.log("Delete button clicked for post ID:", postId);
   if (confirm(i18next.t("deleteConfirmation"))) {
     loading.value[postId] = true;
 
