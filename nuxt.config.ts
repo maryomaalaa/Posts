@@ -1,9 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-export default ({
+export default {
   compatibility: {
-    date: '2024-08-15',
+    date: "2024-08-15",
   },
-  css: ['~/assets/css/tailwind.css'],
+  css: ["~/assets/css/tailwind.css"],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -14,16 +14,13 @@ export default ({
   vite: {
     server: {
       hmr: {
-        protocol: 'ws',
-        host: 'localhost',
+        protocol: "ws",
+        host: "localhost",
       },
     },
   },
   imports: {
-    dirs: [
-      'components',
-      'repositories'
-    ],
+    dirs: ["components", "repositories"],
   },
-  plugins: ['~/plugins/repositories.ts'],
-});
+  plugins: ["~/plugins/repositories.ts", "~/plugins/i18n.js"],
+};

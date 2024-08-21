@@ -14,9 +14,7 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     },
-    "types": [
-      "@types/node"
-    ],
+    "types": ["@types/node", "@nuxt/types", "./i18n.d.ts", "vue-i18n"],
     "lib": ["dom", "esnext"],
     "skipLibCheck": true
   },
@@ -26,6 +24,7 @@
     "store/**/*.ts",
     "layouts/**/*.vue",
     "middleware/**/*.ts",
-    "nuxt.config.ts"
+    "nuxt.config.ts",
+    "types/vue-i18n.d.ts"
   ]
 }

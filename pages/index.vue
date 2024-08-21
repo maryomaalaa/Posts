@@ -6,7 +6,27 @@
         : 'light bg-white text-black'
     "
   >
-    <h1 class="text-center mb-5 text-2xl font-bold">All Posts</h1>
+    <div class="flex justify-between items-center p-4">
+      <div>
+        <p class="text-lg">{{ $t("welcome") }}</p>
+      </div>
+      <div class="flex gap-4">
+        <button
+          @click="changeLanguage('en')"
+          class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
+        >
+          {{ $t("ENGlanguage") }}
+        </button>
+        <button
+          @click="changeLanguage('ar')"
+          class="px-3 py-2 border rounded-md bg-gray-200 hover:bg-gray-300"
+        >
+          {{ $t("ARlanguage") }}
+        </button>
+      </div>
+    </div>
+
+    <h1 class="text-center mb-5 text-2xl font-bold">{{ $t("pageTitle") }}</h1>
     <div class="flex justify-center mb-5">
       <ThemeToggle @updateTheme="toggleState = $event" />
     </div>
@@ -16,7 +36,7 @@
         variant="success"
         class="px-5 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
       >
-        Create Post
+        {{ $t("createPostButton") }}
       </CustomButton>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 px-5">
@@ -39,6 +59,7 @@
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { postRepo } from "~/repositories/postRepo";
+import i18next from "i18next";
 
 interface Post {
   id: number;
@@ -63,7 +84,6 @@ const fetchPosts = async () => {
   try {
     posts.value = await postRepo.getPosts();
 
-    // Check if a new post was created and passed via query parameters
     if (route.query.newPost) {
       const newPost = JSON.parse(route.query.newPost as string);
       posts.value.unshift(newPost); // Add the new post to the top of the list
@@ -83,6 +103,10 @@ const fetchUsers = async () => {
     console.error("Failed to fetch users:", error);
   }
 };
+
+function changeLanguage(lang) {
+  i18next.changeLanguage(lang, () => {});
+}
 
 onMounted(() => {
   fetchPosts();
@@ -110,7 +134,7 @@ const goToPost = (id: number) => {
 };
 
 const handleDelete = async (postId: number) => {
-  if (confirm("Are you sure you want to delete this post?")) {
+  if (confirm(i18next.t("deleteConfirmation"))) {
     loading.value[postId] = true;
 
     try {
