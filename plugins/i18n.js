@@ -24,8 +24,11 @@ i18next.use(LanguageDetector).init({
         contentLabel: "Content",
         savePostButton: "Save Post",
         fillInAllFieldsAlert: "Please fill in all fields.",
+        chatbotInfo:
+          "Scroll down to the bottom of the page to see the new chatbot feature :)",
         ENGlanguage: "English",
         ARlanguage: "Arabic",
+        addCommentButton: "Add Comment",
       },
     },
     ar: {
@@ -45,8 +48,10 @@ i18next.use(LanguageDetector).init({
         contentLabel: "المحتوى",
         savePostButton: "حفظ المنشور",
         fillInAllFieldsAlert: "يرجى ملء جميع الحقول.",
+        chatbotInfo: "انزل الي اسفل الشاشة لاستعمال خاصية الchatbot الجديدة :)",
         ENGlanguage: "الانحليزية",
         ARlanguage: "العربية",
+        addCommentButton: "اضف تعليق",
       },
     },
   },

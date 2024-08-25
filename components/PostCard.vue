@@ -6,13 +6,15 @@
       <h2 class="text-xl font-bold mb-2">{{ title }}</h2>
     </div>
     <div>
+      <p class="mb-2">Author: {{ author }}</p>
+    </div>
+    <div>
       <p class="mb-2">{{ body }}</p>
     </div>
     <div class="flex flex-col items-start">
-      <p class="font-bold mb-1 text-blue-600">{{ author }}</p>
       <div class="flex gap-2 mt-2">
         <CustomButton
-          @click="handleDelete"
+          @click="confirmDelete"
           :isDisabled="loading"
           variant="danger"
           class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded cursor-pointer"
@@ -26,12 +28,24 @@
         >
           {{ $t("viewDetailsButton") }}
         </CustomButton>
+        <CustomButton
+          @click="addComment"
+          variant="primary"
+          class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded cursor-pointer"
+        >
+          Add Comment
+        </CustomButton>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { defineProps, defineEmits } from "vue";
+import PostService from "@/services/PostService";
+import i18next from "i18next";
+import { useRouter } from "vue-router";
+
 const props = defineProps({
   title: String,
   body: String,
@@ -41,14 +55,39 @@ const props = defineProps({
 });
 
 const emits = defineEmits(["delete", "view"]);
+const router = useRouter();
 
-const handleDelete = () => {
-  console.log("Delete button clicked"); // Debugging line
-  emits("delete", props.postId);
+const confirmDelete = async () => {
+  if (confirm(i18next.t("deleteConfirmation"))) {
+    handleDelete();
+  }
+};
+
+const handleDelete = async () => {
+  console.log("Delete button clicked");
+
+  try {
+    await PostService.deletePost(props.postId);
+    emits("delete", props.postId);
+    console.log(`Post ${props.postId} deleted successfully`);
+  } catch (error) {
+    console.error("Failed to delete the post:", error);
+  }
 };
 
 const viewDetails = () => {
-  console.log("View Details button clicked"); // Debugging line
-  emits("view", props.postId);
+  if (props.postId) {
+    router.push(`/posts/${props.postId}`);
+  } else {
+    console.error("Post ID is missing");
+  }
+};
+
+const addComment = () => {
+  if (props.postId) {
+    router.push(`/posts/${props.postId}/AddComment`);
+  } else {
+    console.error("Post ID is missing");
+  }
 };
 </script>

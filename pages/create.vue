@@ -3,32 +3,36 @@
 </template>
 
 <script setup lang="ts">
-import i18next from "i18next";
 import { useRouter } from "vue-router";
-import { postRepo } from "~/repositories/postRepo";
+import axios from "axios";
 
 const router = useRouter();
 
 const savePost = async ({ name, title, body }) => {
-  if (!name || !title || !body) {
-    alert(i18next.t("fillInAllFieldsAlert"));
-    return;
-  }
-
   const newPost = {
     title,
     body,
     userId: 1,
   };
 
-  const createdPost = await postRepo.createPost(newPost);
+  try {
+    // Send a POST request to your .NET backend to save the new post
+    const response = await axios.post(
+      "http://localhost:5001/api/posts",
+      newPost
+    );
+    console.log("Post created:", response.data);
 
-  router.push({
-    path: "/",
-    query: {
-      refresh: Date.now(),
-      newPost: JSON.stringify(createdPost),
-    },
-  });
+    // After the post is created, redirect to the homepage
+    router.push({
+      path: "/",
+      query: {
+        refresh: Date.now(),
+        newPost: JSON.stringify(response.data),
+      },
+    });
+  } catch (error) {
+    console.error("Failed to save the post:", error);
+  }
 };
 </script>

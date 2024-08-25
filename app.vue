@@ -1,22 +1,17 @@
 <template>
-  <router-view :posts="posts" @addPost="addNewPost" />
+  <router-view />
+  <!-- This is where your routed components will be rendered -->
 </template>
 
 <script setup>
-import { ref, onMounted, provide } from 'vue';
+import { onMounted } from "vue";
+import { useRouter } from "vue-router";
 
-const posts = ref([]);
-
-const fetchPosts = async () => {
-  const response = await fetch('https://jsonplaceholder.typicode.com/posts');
-  posts.value = await response.json();
-};
-
-const addNewPost = (newPost) => {
-  posts.value.unshift(newPost); 
-};
-
-provide('posts', posts); 
-
-onMounted(fetchPosts);
+// Optional: Log router navigation for debugging purposes
+onMounted(() => {
+  const router = useRouter();
+  router.afterEach((to, from) => {
+    console.log(`Navigated from ${from.fullPath} to ${to.fullPath}`);
+  });
+});
 </script>

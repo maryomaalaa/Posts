@@ -18,7 +18,7 @@
           v-for="comment in comments"
           :key="comment.id"
           :name="comment.name"
-          :body="comment.body"
+          :body="comment.content"
           :email="comment.email"
         />
       </div>
@@ -35,8 +35,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { postRepo } from "~/repositories/postRepo";
-import { commentRepo } from "~/repositories/commentRepo";
+import axios from "axios";
 
 interface Post {
   id: number;
@@ -45,17 +44,39 @@ interface Post {
   userId: number;
 }
 
+interface Comment {
+  id: number;
+  name: string;
+  content: string;
+  email: string;
+  postId: number;
+}
+
 const route = useRoute();
-const postId = Array.isArray(route.params.id)
-  ? parseInt(route.params.id[0], 10)
-  : parseInt(route.params.id, 10);
+const postId = parseInt(route.params.id as string, 10);
+
 const post = ref<Post | null>(null);
-const comments = ref([]);
+const comments = ref<Comment[]>([]);
 
 const fetchPostAndComments = async () => {
   try {
-    post.value = await postRepo.getPostById(postId);
-    comments.value = await commentRepo.getComments(postId);
+    // Assuming you're viewing post with id 1
+    const postResponse = await axios.get(
+      `https://localhost:5001/api/posts/${postId}`
+    );
+    post.value = postResponse.data;
+
+    const commentsResponse = await axios.get(
+      `https://localhost:5001/api/comments?postId=${postId}`
+    );
+
+    if (commentsResponse.data.length === 0) {
+      console.warn("No comments returned for this post.");
+    } else {
+      console.log("Comments fetched:", commentsResponse.data);
+    }
+
+    comments.value = commentsResponse.data;
   } catch (error) {
     console.error("Failed to load post or comments:", error);
   }
