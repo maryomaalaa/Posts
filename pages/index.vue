@@ -52,11 +52,12 @@
         :key="post.id"
         :title="post.title"
         :body="post.body"
-        :author="getUserName(post.userId)"
+        :author="post.author"
         :postId="post.id"
         :loading="loading[post.id]"
         @delete="handleDelete"
         @view="goToPost"
+        @addComment="addComment"
       />
     </div>
 
@@ -69,15 +70,16 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { postRepo } from "~/repositories/postRepo";
 import ChatBot from "~/components/ChatBot.vue";
 import i18next from "i18next";
+import PostService from "@/services/PostService"; // Import your PostService for the API calls
 
 interface Post {
   id: number;
   title: string;
   body: string;
   userId: number;
+  author: string;
 }
 
 interface User {
@@ -94,35 +96,21 @@ const route = useRoute();
 
 const fetchPosts = async () => {
   try {
-    posts.value = await postRepo.getPosts();
-
-    if (route.query.newPost) {
-      const newPost = JSON.parse(route.query.newPost as string);
-      posts.value.unshift(newPost);
-    }
+    const response = await PostService.getPostSummaries();
+    posts.value = response.data.map((post) => ({
+      id: post.id,
+      title: post.title,
+      body: post.content,
+      author: post.name,
+      userId: post.userId,
+    }));
   } catch (error) {
     console.error("Failed to fetch posts:", error);
   }
 };
 
-const fetchUsers = async () => {
-  try {
-    const userResponse = await fetch(
-      "https://jsonplaceholder.typicode.com/users"
-    );
-    users.value = await userResponse.json();
-  } catch (error) {
-    console.error("Failed to fetch users:", error);
-  }
-};
-
-function changeLanguage(lang) {
-  i18next.changeLanguage(lang, () => {});
-}
-
 onMounted(() => {
   fetchPosts();
-  fetchUsers();
 });
 
 watch(
@@ -132,10 +120,9 @@ watch(
   }
 );
 
-const getUserName = (userId: number) => {
-  const user = users.value.find((user) => user.id === userId);
-  return user ? user.name : "Unknown";
-};
+function changeLanguage(lang) {
+  i18next.changeLanguage(lang, () => {});
+}
 
 const createPost = () => {
   router.push("/create");
@@ -145,28 +132,11 @@ const goToPost = (id: number) => {
   router.push(`/posts/${id}`);
 };
 
-const handleDelete = async (postId: number) => {
-  if (confirm(i18next.t("deleteConfirmation"))) {
-    loading.value[postId] = true;
+const addComment = (postId: number) => {
+  router.push(`/posts/${postId}/AddComment`);
+};
 
-    try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${postId}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      if (response.ok) {
-        posts.value = posts.value.filter((post) => post.id !== postId);
-      } else {
-        console.error("Failed to delete post");
-      }
-    } catch (error) {
-      console.error("Error during deletion:", error);
-    } finally {
-      loading.value[postId] = false;
-    }
-  }
+const handleDelete = (postId) => {
+  posts.value = posts.value.filter((post) => post.id !== postId);
 };
 </script>
